@@ -14,13 +14,14 @@
 
     <!-- Modules -->
     <modules>
-        <!--        <module>customer</module>-->
-        <!--        <module>fraud</module>-->
-        <!--        <module>eureka-server</module>-->
-        <!--        <module>clients</module>-->
-        <!--        <module>notification</module>-->
-        <!--        <module>apigw</module>-->
-        <!--        <module>amqp</module>-->
+        <module>amqp</module>
+        <module>apigw</module>
+        <module>fraud</module>
+
+        <module>customer</module>
+        <module>consul</module>
+        <module>notification</module>
+        <module>clients</module>
     </modules>
 
     <!-- Properties -->
