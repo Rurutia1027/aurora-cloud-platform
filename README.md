@@ -1,136 +1,103 @@
-# Hands-on-Lab.Eclipse-MAT-Lab
+# Aurora Cloud Platform 
+A Cloud-Native Microservices Applicatin (Spring Cloud + Spring Boot + Docker + K8s + Observability).
 
-This project lets you quickly generate Java exception and memory dump scenarios for [Eclipse Memory Analyzer Tool (MAT)](https://help.eclipse.org/latest/index.jsp?topic=/org.eclipse.mat.ui.help/welcome.html).
-No complex setup required-just run and start analyzing. 
+Aurora Cloud Platform is a modular microservices system built with Spring Boot, designed to demostrate cloud-native application patterns including service discovery, messaging, observability, containerization, and Kubernetes deployment. 
 
-## Features 
-- Ready-to-use Docker image,  no local build required
-- Supports Jib build to create a runnable image
-- Automatically triggers multiple exception/memory leak scenarios
-- Generates `.dump` files ready for MAT analysis
+This repository contains the **application source code**, **Dockerfiles**, **base Kubernetes metrics**, and **local development tooling**.
 
-## Project Structure Introduction 
-### Package Structure 
+Environment-specific deployment manifests are stored separately in the GitOps repository: 
+`https://github.com/Rurutia1027/aurora-cloud-gitops`
+
+---
+
+## 1. Architecture Overview 
+The application is composed of several Spring Boot microservices that communicate through REST and AMQP.
+
+### Core Components 
+| Component | Description |
+|----------|-------------|
+| `eureka-server` | Service discovery registry for microservices (Spring Cloud Netflix) |
+| `apigw` | API Gateway for routing external traffic to backend services |
+| `customer` | Customer management microservice |
+| `fraud` | Fraud detection microservice |
+| `notification` | Notification delivery microservice |
+| `amqp` | AMQP module providing RabbitMQ configuration (exchanges, queues, bindings) |
+| `clients` | Shared Feign clients and common DTOs |
+
+### Observability Stack (Integrated)
+- **Structured JSON Logging**
+- **Distributed Tracing (OpenTelementry)**
+- **Metrics (Micrometer)**
+- **Log/Trace correlation fields (traceId, spanId)**
+
+### Contarinerization 
+Every service includes:
+- A production-ready Dockerfile 
+- Container via `docker build` or CI pipeline 
+- Base YAML manifests under `/k8s`
+
+## 2. Repository Structure 
 ```
-Hands-on-Lab.MAT-Eclipse/
-│
-├─ src/
-│   ├─ main/
-│   │   ├─ java/
-│   │   │   └─ com/
-│   │   │       └─handson/
-│   │   │           └─ matdemo/
-│   │   │               ├─ Main.java          # Entry point, runs all or selected scenarios
-│   │   │               ├─ scenario/
-│   │   │               │   ├─ Scenario1.java  # e.g., heap leak
-│   │   │               │   ├─ Scenario2.java  # e.g., deadlock
-│   │   │               │   └─ Scenario3.java  # e.g., exception triggers
-│   │   │               └─ util/
-│   │   │                   └─ DumpUtils.java  # Helper for generating .dump files
-│   │   └─ resources/
-│   │       └─ config.properties                # Optional scenario configs
-│   └─ test/
-│       └─ java/...
-│
-├─ dumps/                  # Generated .dump files
-│   ├─ scenario-1/
-│   │   └─ heapleak.dump
-│   ├─ scenario-2/
-│   │   └─ deadlock.dump
-│   └─ scenario-3/
-│       └─ exception.dump
-│
-├─ pom.xml                 # Maven project + Jib configuration
-└─ README.md
-```
-
-### Java Package Design 
-Base package: com.handson.matdemo
-**`Main.java`**
-- Runs all or selected scenarios
-- Calls each `DumpScenario` implementation
-
-**scenario package**
-- Each scenario implements a common interface
-```java
-public interface DumpScenario {
-    void run(String outputDir); 
-}
-```
-- Each scenario output is its `.dump` to its own folder in `dumps/`
-
-**util package**
-- `DumpUtils.java` handles:
-1. Creating output directories
-2. Generating `.dump` files
-3. Naming files (e.g., timestamps, scenario names)
-
-### `.dump` File Organization 
-
-**Separate by scenario**
-```
-dumps/scenario-1/heapleak.dump
-dumps/scenario-2/deadlock.dump
-dumps/scenario-3/exception.dump
+├── README.md
+├── docker-compose.yml # Local RabbitMQ + dependencies
+├── diagrams.drawio # System architecture diagrams
+├── amqp/
+├── apigw/
+├── clients/
+├── customer/
+├── eureka-server/ -> consul 
+├── fraud/
+├── notification/
+├── k8s/
+│ └── kind/ # Developer local manifests
+└── pom.xml # Parent Maven project
 ```
 
-**Optional: include timestamp in filename to avoid overwriting**
-```
-dumps/scenario-1/heapleak-2025-09-06T14-30.dump
-```
-- Clear hierarchy makes it **MAT-friendly** and easy to use in hands-on tutorials
-
-### Execution Flow 
-**Run the Jib-built image**
-```bash
-docker run --rm -v $(pwd)/dumps:/app/dumps mat-hands-on:latest
+## 3. Running Locally 
+### 3.1 Start Dependencies (RabbitMQ)
+```bash 
+docker-compose up -d 
 ```
 
-**`Main.java` calls each scenario class**
-- Creates output folder if missing
-- Runs the scenario logic (heap leak, deadlock, exceptions, etc.)
-- Generates `.dump` file via `DumpUtils`
-  
-**Prints summary**
-```
-Scenario 1: heap leak -> dumps/scenario-1/heapleak.dump
-Scenario 2: deadlock -> dumps/scenario-2/deadlock.dump
+### 3.2 Start Eureka Server 
+```bash 
+cd eureka-server
+./mvnw spring-boot:run
 ```
 
-## Quick Start 
-
-### Run with Docker
-```bash
-docker run --rm -v $(pwd)/dumps:/app/dumps nanachi1027/mat-hands-on:latest
-```
-- After running, `.dump` files for different scenarios will appear in `./dumps`
-
-### Build and Run with Jib 
-```bash
-./mvnw compile jib:dockerBuild -Dimage=mat-hands-on:latest
-docker run --rm -v $(pwd)/dumps:/app/dumps mat-hands-on:latest
+### 3.3 Start Individual Services 
+For example, to start the consumer service: 
+```bash 
+cd consumer 
+./mvnw spring-boot:run 
 ```
 
-### Load Dumps into MAT 
-- Open MAT
-- Go to `File` -> `Open Heap Dump`
-- Select a generated `.dump` file 
-- Star analyzing exceptions and memory issues
+## 4. Build Docker Images 
+Each microservice containes its own Dockerfile 
+### 4.1 Build all services 
+```bash 
+mvn clean pakcage -DskipTests 
+```
 
-## Example Scenarios 
-- Heap memory leak simulation
-- Multi-thread deadlock simulation
-- Common Java exception triggers
+### 4.2 Bild a specific service 
+```bash 
+docker build -t aurora/customer:latest ./customer
+```
 
-> Each run overwrites previous dumps. Check the dumps directory for the latest files.
+## 5. Kubernetes Deployment Base Manifests 
+This repository contains based K8s manifests only: 
+```
+k8s/
+└── kind/
+```
+Environment-specific overlays are maintained in the GitOps repository.
+[aurora-cloud-gitops](https://github.com/Rurutia1027/aurora-cloud-gitops)
 
-## Learn More About MAT 
-For a full, detailed introduction to MAT's features and analysis techniques, check out my Medium blog: **[Medium: Hands-on MAT Deep Dive]()**
+## 6. GitOps Integration 
+The CI pipeline (GitHub Actions) will:
+- Build and push Docker images
+- Update image tags in `aurora-cloud-gitips`
+- Argo CD will detect changes and deploy automatically
 
-This article explains MAT's capabilities in depth and shows how to analyze different types of Java heap dumps effectively. 
-
-## Target Users 
-- Java developers and testers
-- Engineers learning MAT hands-on
-- Anyone wanting practical exception and memory analysis examples 
-
+## 7. License
+[LICENSE](./LICENSE)
