@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 WORKDIR /app
 COPY target/notification-1.0-SNAPSHOT.jar notification.jar
 EXPOSE 8082

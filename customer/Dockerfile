@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-alpine
+FROM eclipse-temurin:17-jdk
 WORKDIR app
 COPY target/customer-1.0-SNAPSHOT.jar customer.jar
 EXPOSE 8080
