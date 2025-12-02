@@ -55,10 +55,7 @@ jobs:
             ${{ runner.os }}-maven-
 
       - name: Build project
-        run: mvn clean compile
-
-      - name: Run tests
-        run: mvn test
+        run: mvn clean packages
 
       - name: Set execution permission for scripts
         run: chmod +x ./bin/build-images.sh
