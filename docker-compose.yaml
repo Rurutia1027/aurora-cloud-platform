@@ -1,33 +1,47 @@
 services:
-  postgres:
-    container_name: postgres
-    image: postgres
-    environment:
-      POSTGRES_USER: amigoscode
-      POSTGRES_PASSWORD: password
-      PGDATA: /data/postgres
-    volumes:
-      - postgres:/data/postgres
+  #  postgres:
+  #    container_name: postgres
+  #    image: postgres
+  #    environment:
+  #      POSTGRES_USER: amigoscode
+  #      POSTGRES_PASSWORD: password
+  #      PGDATA: /data/postgres
+  #    volumes:
+  #      - postgres:/data/postgres
+  #    ports:
+  #      - "5432:5432"
+  #    networks:
+  #      - postgres
+  #    restart: unless-stopped
+  consul:
+    image: hashicorp/consul:latest
+    container_name: consul
     ports:
-      - "5432:5432"
-    networks:
-      - postgres
-    restart: unless-stopped
-  zipkin:
-    image: openzipkin/zipkin
-    container_name: zipkin
-    ports:
-      - "9411:9411"
+      - "8500:8500"      # Consul UI & API Port
+      - "8600:8600/udp"  # Consul DNS  Port
+    command: "agent -dev -client=0.0.0.0"
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8500/v1/status/leader" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
     networks:
       - spring
-  rabbitmq:
-    image: rabbitmq:3.9.11-management-alpine
-    container_name: rabbitmq
-    ports:
-      - "5672:5672"
-      - "15672:15672"
-    networks:
-      - spring
+  #  zipkin:
+  #    image: openzipkin/zipkin
+  #    container_name: zipkin
+  #    ports:
+  #      - "9411:9411"
+  #    networks:
+  #      - spring
+#  rabbitmq:
+#    image: rabbitmq:3.9.11-management-alpine
+#    container_name: rabbitmq
+#    ports:
+#      - "5672:5672"
+#      - "15672:15672"
+#    networks:
+#      - spring
 #  eureka-server:
 #    image: amigoscode/eureka-server:latest
 #    container_name: eureka-server
@@ -93,6 +107,7 @@ services:
 #      - zipkin
 #      - postgres
 #      - rabbitmq
+
 networks:
   postgres:
     driver: bridge
