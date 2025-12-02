@@ -1,15 +1,6 @@
 #!/bin/bash
 set -e
 
-# Maven build
-
-for module in customer fraud notification apigw; do
-  echo "Building $module ..."
-  cd $module
-  mvn clean package -DskipTests=false
-  cd ../
-done
-
 # Docker build
 for module in customer fraud notification apigw; do
   echo "Building Docker image for $module ..."
