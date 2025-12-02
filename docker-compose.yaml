@@ -1,18 +1,26 @@
 services:
-  #  postgres:
-  #    container_name: postgres
-  #    image: postgres
-  #    environment:
-  #      POSTGRES_USER: amigoscode
-  #      POSTGRES_PASSWORD: password
-  #      PGDATA: /data/postgres
-  #    volumes:
-  #      - postgres:/data/postgres
-  #    ports:
-  #      - "5432:5432"
-  #    networks:
-  #      - postgres
-  #    restart: unless-stopped
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      PGDATA: /data/postgres
+    volumes:
+      - postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  rabbitmq:
+    image: rabbitmq:3.9.11-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - spring
   consul:
     image: hashicorp/consul:latest
     container_name: consul
