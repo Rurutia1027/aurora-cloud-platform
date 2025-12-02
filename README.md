@@ -1,4 +1,4 @@
-# Aurora Cloud Platform 
+# Aurora Cloud Platform  | [![CI Pipeline](https://github.com/Rurutia1027/aurora-cloud-platform/actions/workflows/ci.yaml/badge.svg)](https://github.com/Rurutia1027/aurora-cloud-platform/actions/workflows/ci.yaml)
 A Cloud-Native Microservices Applicatin (Spring Cloud + Spring Boot + Docker + K8s + Observability).
 
 Aurora Cloud Platform is a modular microservices system built with Spring Boot, designed to demostrate cloud-native application patterns including service discovery, messaging, observability, containerization, and Kubernetes deployment. 
