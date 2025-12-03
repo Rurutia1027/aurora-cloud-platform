@@ -4,8 +4,6 @@ server:
 spring:
   application:
     name: ${APP_NAME:notification}
-  profiles:
-    active: default
 
   datasource:
     url: ${DB_URL:jdbc:postgresql://localhost:5432/notification}
