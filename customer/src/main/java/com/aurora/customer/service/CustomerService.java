@@ -8,8 +8,10 @@ import com.aurora.customer.dto.Customer;
 import com.aurora.customer.dto.CustomerRegistrationRequest;
 import com.aurora.customer.repo.CustomerRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class CustomerService {
@@ -38,14 +40,15 @@ public class CustomerService {
         NotificationRequest notificationRequest = new NotificationRequest(
                 customer.getId(),
                 customer.getEmail(),
-                String.format("Hi %s, welcome to Amigoscode...",
+                String.format("Hi %s, welcome to Bank System...",
                         customer.getFirstName())
         );
+
         rabbitMQMessageProducer.publish(
                 notificationRequest,
                 "internal.exchange",
                 "internal.notification.routing-key"
         );
-
+        log.info("Publish request to message broker");
     }
 }
