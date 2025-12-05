@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fraud
+  namespace: aurora-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fraud
+  template:
+    metadata:
+      labels:
+        app: fraud
+    spec:
+      containers:
+        - name: fraud
+          image: nanachi1027/aurora-fraud:latest
+          ports:
+            - containerPort: 8081
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: SPRING_PROFILES_ACTIVE
+            - name: CONSUL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: CONSUL_HOST
+            - name: CONSUL_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: CONSUL_PORT
+            - name: SPRING_DATASOURCE_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: POSTGRES_HOST
+            - name: SPRING_DATASOURCE_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: POSTGRES_PORT
+            - name: SPRING_DATASOURCE_DB
+              value: fraud
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: POSTGRES_USER
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                configMapKeyRef:
+                  name: aurora-config
+                  key: POSTGRES_PASSWORD
