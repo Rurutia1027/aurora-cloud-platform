@@ -1,5 +1,5 @@
 -- V1__create_customer_table.sql
-CREATE TABLE customers (
+CREATE TABLE customer (
                            id BIGINT PRIMARY KEY DEFAULT nextval('customer_id_sequence'),
                            first_name VARCHAR(100) NOT NULL,
                            last_name VARCHAR(100) NOT NULL,
