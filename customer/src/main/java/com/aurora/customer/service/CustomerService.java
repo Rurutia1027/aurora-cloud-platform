@@ -11,6 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
 @AllArgsConstructor
@@ -22,9 +24,10 @@ public class CustomerService {
 
     public void registerCustomer(CustomerRegistrationRequest request) {
         Customer customer = Customer.builder()
-                .firstName(request.firstName())
-                .lastName(request.lastName())
-                .email(request.email())
+                .firstName(request.getFirstName())
+                .lastName(request.getLastName())
+                .email(request.getEmail())
+                .id(UUID.randomUUID().variant())
                 .build();
         // todo: check if email valid
         // todo: check if email not taken
@@ -33,7 +36,7 @@ public class CustomerService {
         FraudCheckResponse fraudCheckResponse =
                 fraudClient.isFraudster(customer.getId());
 
-        if (fraudCheckResponse.isFraudster()) {
+        if (fraudCheckResponse.getIsFraudster()) {
             throw new IllegalStateException("fraudster");
         }
 
