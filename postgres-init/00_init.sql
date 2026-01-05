@@ -1,3 +1,0 @@
-CREATE DATABASE customer;
-CREATE DATABASE notification;
-CREATE DATABASE fraud;
