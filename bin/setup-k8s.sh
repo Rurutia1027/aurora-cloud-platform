@@ -94,11 +94,11 @@ helm upgrade --install kiali-server kiali/kiali-server \
   --set external_services.grafana.url="$GRAFANA_URL" \
   --create-namespace
 
-
-# -----------------------------
-# Wait for all pods
-# -----------------------------
-kubectl wait --for=condition=Ready pods --all -n "$ISTIO_NAMESPACE" --timeout=60s
+# This not stable in ci pipeline use sleep 30 in pipeline instead
+## -----------------------------
+## Wait for all pods
+## -----------------------------
+#kubectl wait --for=condition=Ready pods --all -n "$ISTIO_NAMESPACE" --timeout=60s
 
 # -----------------------------
 # Summary & Port-forward tips

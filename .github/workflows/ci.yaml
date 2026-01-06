@@ -43,6 +43,10 @@ jobs:
         run: |
           bash ./bin/setup-k8s.sh 
 
+      - name: Wait for all pods ready pause for 30s
+        run: |
+          sleep 30
+
       - name: Show All Svcs, Pods, and Deployments
         run: |
           kubectl get pods -A
