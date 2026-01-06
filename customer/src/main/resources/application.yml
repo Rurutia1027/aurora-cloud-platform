@@ -25,7 +25,15 @@ spring:
     show-sql: true
 
   rabbitmq:
-    addresses: ${RABBITMQ_ADDR:localhost:5672}
+    addresses: ${RABBITMQ_ADDR:amqp://localhost:5672}
+
+  cloud:
+    discovery:
+      enabled: false
+    loadbalancer:
+      ribbon:
+        enabled: false
+
 
 management:
   endpoints:

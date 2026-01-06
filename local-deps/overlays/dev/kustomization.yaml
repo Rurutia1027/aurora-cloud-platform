@@ -1,7 +1,8 @@
-namespace: aurora-platform
+namespace: aurora
 
-bases:
+resources:
   - ../../base
+  - namespace.yaml
 
 patchesStrategicMerge:
   - patch-postgres.yaml
