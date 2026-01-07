@@ -2,3 +2,5 @@
 set -euo pipefail
 
 kind delete cluster --name k8s-cluster-dev
+
+kind delete cluster --name k8s-cluster-prod
